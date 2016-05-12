@@ -6,6 +6,9 @@ engines:
         - php
   phpcodesniffer:
     enabled: true
+    checks:
+      Generic Files LineLength TooLong:
+        enabled: false
   duplication:
     enabled: true
     config:

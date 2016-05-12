@@ -2,16 +2,20 @@
 include 'config.php';
 include 'functions.php';
 
-if (isset($_POST['chooselogo'])) {
-    $chooselogo = filter_var($_POST['chooselogo'], FILTER_SANITIZE_NUMBER_INT);
-    if (isset($_FILES['file']['tmp_name']))
+if (isset($_POST['picklogo'])) {
+    $chooselogo = filter_var($_POST['picklogo'], FILTER_SANITIZE_NUMBER_INT);
+    if (isset($_FILES['file']['tmp_name'])) {
         $file = $_FILES['file']['tmp_name'];
-    if (isset($_POST['source']))
+    }
+    if (isset($_POST['source'])) {
         $source = filter_var($_POST['source'], FILTER_SANITIZE_NUMBER_INT);
-    if (isset($_POST['departament']))
+    }
+    if (isset($_POST['departament'])) {
         $departament = filter_var($_POST['departament'], FILTER_SANITIZE_NUMBER_INT);
-    if (isset($_POST['flip']))
+    }
+    if (isset($_POST['flip'])) {
         $flip = filter_var($_POST['flip'], FILTER_SANITIZE_NUMBER_INT);
+    }
     $logo = dirname(__FILE__) . '/logo/' . $chooselogo . '.png';
     
     // Read logo
@@ -21,21 +25,21 @@ if (isset($_POST['chooselogo'])) {
     $image = imagecreatefromjpeg($file);
     if (!$image) {
         handleError(2);
-	}
+    }
     // Check width(700->2028px) and height(420->1229px)
     $dimensions = checkDimensions($image, $minwidth, $maxwidth, $minheight, $maxheight);
     // Flip image if required (horizontal)
     if ($flip) {
-        $image = flipImage($image, $dimensions[0], $dimensions[1], false, true);
-	}
+        $image = flipImage($image, $dimensions[0], $dimensions[1]);
+    }
     //  Resize if needed
     if ($dimensions[2]) {
         $logo = resizePng($logo, $dimensions[0], $dimensions[1]);
-	}
+    }
     // Save stats in database
     if ($image) {
         saveStats($departament, $chooselogo, $source, $flip);
-	}
+    }
     // Rename the file
     $name = renameImage($_FILES['file']['name'], $source);
     
@@ -47,7 +51,7 @@ if (isset($_FILES['fileMockup']['tmp_name'])) {
     $file = $_FILES['fileMockup']['tmp_name'];
     if (isset($_POST['source'])) {
         $source = filter_var($_POST['source'], FILTER_SANITIZE_NUMBER_INT);
-	}
+    }
     $banner = dirname(__FILE__) . '/mockup/ocasion.jpg';
     $mockup = dirname(__FILE__) . '/mockup/ocasion.png';
     $image  = imagecreatefromjpeg($file);
@@ -63,22 +67,23 @@ if (isset($_FILES['fileMockup']['tmp_name'])) {
 
 if (isset($_POST['text'])) {
     $text = $_POST["text"];
-    if (isset($_FILES['files']['tmp_name']))
+    if (isset($_FILES['files']['tmp_name'])) {
         $files = $_FILES['files']['tmp_name'];
-    if (isset($_POST['color']))
+    }
+    if (isset($_POST['color'])) {
         $color = filter_var($_POST['color'], FILTER_SANITIZE_NUMBER_INT);
-    if (isset($_POST['departament']))
+    }
+    if (isset($_POST['departament'])) {
         $departament = filter_var($_POST['departament'], FILTER_SANITIZE_NUMBER_INT);
+    }
     $names = $_FILES['files']['name'];
     $imagetextgenerated = createText($text, $color, $font, $fontsize, $maxwidth, $maxheight);
     if (count($files) > 1) {
-        
         // Prepare ZipFile
         $zipfile = tempnam("tmp", "zip");
         $zip     = new ZipArchive();
         $zip->open($zipfile, ZipArchive::OVERWRITE);
         foreach ($files as $index => $file) {
-            
             // Read file
             $image = imagecreatefromjpeg($files[$index]);
             if (!$image) {

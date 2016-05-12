@@ -4,35 +4,25 @@ function checkDimensions($image, $minwidth, $maxwidth, $minheight, $maxheight)
 {
     $width  = imagesx($image);
     $height = imagesy($image);
-    $resize = 0;
+    $resize = false;
     if ($width < $minwidth || $width > $maxwidth || $height < $minheight || $height > $maxheight) {
         handleError(1);
-	}	
+    }
     if (($width !== $maxwidth) && ($height !== $maxheight)) {
-        $resize = 1;
-	}
+        $resize = true;
+    }
     return array(
-        $width,
-        $height,
-        $resize
+    $width,
+    $height,
+    $resize
     );
 }
 // Flip la fundal
-function flipImage($image, $width, $height, $vertical, $horizontal)
+function flipImage($image, $width, $height)
 {
-    if (!$vertical && !$horizontal) {
-        return $image;
-	}
     $flipped = imagecreatetruecolor($width, $height);
-    if ($vertical) {
-        for ($heighty = 0; $heighty < $height; $heighty++) {
-            imagecopy($flipped, $image, 0, $heighty, 0, $height - $heighty - 1, $width, 1);
-        }
-    }
-    if ($horizontal) {
-        for ($widthx = 0; $widthx < $width; $widthx++) {
-            imagecopy($flipped, $image, $widthx, 0, $width - $widthx - 1, 0, 1, $height);
-        }
+    for ($widthx = 0; $widthx < $width; $widthx++) {
+        imagecopy($flipped, $image, $widthx, 0, $width - $widthx - 1, 0, 1, $height);
     }
     return $flipped;
 }
@@ -84,13 +74,13 @@ function saveStats($departament, $logo = null, $source = 0, $flip = 0, $copyrigh
     // Check connection
     if ($mysqli->connect_error) {
         handleError(3);
-	}
+    }
     if ($logo) {
         $mysqli->query("INSERT INTO images (date, departament, logo, source, flip) VALUES (CURDATE(), '" . mysqli_real_escape_string($mysqli, $departament) . "', '" . mysqli_real_escape_string($mysqli, $logo) . "', '" . mysqli_real_escape_string($mysqli, $source) . "', '" . mysqli_real_escape_string($mysqli, $flip) . "')");
-	}
+    }
     if ($copyright) {
         $mysqli->query("INSERT INTO images (date, departament, copyright, color) VALUES (CURDATE(), '" . mysqli_real_escape_string($mysqli, $departament) . "', '" . mysqli_real_escape_string($mysqli, $copyright) . "', '" . mysqli_real_escape_string($mysqli, $color) . "')");
-	}
+    }
     mysqli_close($mysqli);
 }
 // Show total images edited
@@ -107,7 +97,7 @@ function showStats()
     // Check connection
     if ($mysqli->connect_error) {
         handleError(3);
-	}
+    }
     $maximages = $mysqli->query("SELECT max(id) as id FROM images")->fetch_object()->id;
     $mysqli->close();
     return $maximages;
@@ -122,12 +112,12 @@ function createText($text, $color, $font, $fontsize, $maxwidth, $maxheight)
     imagealphablending($copyright, false);
     imagesavealpha($copyright, true);
     // background color
-    $bgcolor = imagecolorallocatealpha($copyright, 255, 255, 255, 127);
+    $bgcolor   = imagecolorallocatealpha($copyright, 255, 255, 255, 127);
     // font color
     $fontcolor = imagecolorallocate($copyright, 0, 0, 0);
     if ($color) {
         $fontcolor = imagecolorallocate($copyright, 255, 255, 255);
-	}
+    }
     imagefilledrectangle($copyright, 0, 0, $maxwidth, $maxheight, $bgcolor);
     $widthx  = $maxwidth - $bbox_width - 90;
     $heighty = $maxheight - $bbox_height + $fontsize - 50;
