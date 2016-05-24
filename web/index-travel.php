@@ -115,7 +115,17 @@
                                             <div class="panel panel-default">
                                                 <div class="panel-heading">Font Color</div>
                                                 <div class="panel-body">
-                                                    <input id='color' name='color' type="checkbox" checked value="1" data-toggle="toggle" data-on="<i class='fa fa-play'></i> White" data-off="<i class='fa fa-pause'></i> Black"> </div>
+													<div class="btn-group" data-toggle="buttons">
+													<label class="btn btn-default active" style="min-width:50px">
+														<input type="radio" name="color" value="1" autocomplete="off" checked="checked">
+														<span class="glyphicon glyphicon-ok"></span>
+													</label>
+													<label class="btn btn-black" style="min-width:50px">
+														<input type="radio" name="color" value="2" autocomplete="off">
+														<span class="glyphicon glyphicon-ok"></span>
+													</label>
+													</div>													
+												</div>
                                             </div>
                                         </div>
                                         <div class="col-md-8 text-center">
@@ -150,9 +160,9 @@
         <div class="label"> Total images:
             <div id="number1" class="count">
 				<?php
-                    require "functions.php"; 
-                    print showStats(); 
-                ?> 
+					require "functions.php";
+					print showStats();
+				?> 
             </div>
         </div>
     </div>
